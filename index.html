@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmEye - Agricultural Drone Control System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00958e;
+            --primary-light: #00b5ad;
+            --primary-dark: #007973;
+            --bg-dark: #000000;
+            --bg-dark-elevated: #0a0a0a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--bg-dark);
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(0, 149, 142, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 48px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 28px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--bg-card);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #001f1d 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 149, 142, 0.15) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: glow 8s ease-in-out infinite;
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 149, 142, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 149, 142, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.5;
+        }
+
+        @keyframes glow {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1); 
+                opacity: 0.5; 
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.3); 
+                opacity: 0.3; 
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 149, 142, 0.1);
+            border: 1px solid rgba(0, 149, 142, 0.3);
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 32px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero h1 {
+            font-size: clamp(42px, 7vw, 80px);
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .hero .tagline {
+            font-size: clamp(18px, 3vw, 28px);
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            font-weight: 400;
+            line-height: 1.5;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        .cta-button {
+            padding: 16px 36px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button.primary {
+            background: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 8px 24px rgba(0, 149, 142, 0.3);
+        }
+
+        .cta-button.primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 149, 142, 0.4);
+        }
+
+        .cta-button.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .cta-button.secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        /* Section Styling */
+        section {
+            padding: 120px 48px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+        }
+
+        .section-subtitle {
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Features Section */
+        .features {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-dark-elevated) 100%);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-8px);
+            border-color: rgba(0, 149, 142, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(0, 149, 142, 0.3);
+            transition: transform 0.4s;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* Interface Showcase */
+        .interface-showcase {
+            background: linear-gradient(180deg, var(--bg-dark-elevated) 0%, #001a1a 100%);
+        }
+
+        .interface-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 120px;
+        }
+
+        .interface-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .interface-item:nth-child(even) {
+            direction: rtl;
+        }
+
+        .interface-item:nth-child(even) > * {
+            direction: ltr;
+        }
+
+        .interface-visual {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(0, 149, 142, 0.1) 0%, rgba(0, 0, 0, 0.5) 100%);
+            aspect-ratio: 16/10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.5s;
+        }
+
+        .interface-visual:hover {
+            transform: scale(1.02);
+        }
+
+        .interface-placeholder {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .placeholder-icon {
+            font-size: 64px;
+            opacity: 0.3;
+        }
+
+        .placeholder-text {
+            color: var(--text-tertiary);
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .interface-details h3 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .interface-details p {
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .interface-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .interface-features li {
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            padding-left: 28px;
+            position: relative;
+            font-size: 15px;
+        }
+
+        .interface-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Flight Data Section */
+        .flight-data {
+            background: var(--bg-dark);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .data-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .data-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-4px);
+            border-color: rgba(0, 149, 142, 0.3);
+        }
+
+        .data-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 20px;
+            box-shadow: 0 6px 20px rgba(0, 149, 142, 0.3);
+        }
+
+        .data-card h3 {
+            font-size: 19px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .data-card p {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        /* Contact Section */
+        .contact {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #001f1d 100%);
+            text-align: center;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 48px;
+            margin-top: 60px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+
+        .contact-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .contact-card h3 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .contact-card p {
+            color: var(--text-primary);
+            font-size: 17px;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-dark);
+            padding: 60px 48px 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .footer-text {
+            color: var(--text-tertiary);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .footer-text p:first-child {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-content {
+                padding: 16px 32px;
+            }
+
+            section {
+                padding: 80px 32px;
+            }
+
+            .interface-item {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+
+            .interface-item:nth-child(even) {
+                direction: ltr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.98);
+                flex-direction: column;
+                padding: 24px;
+                gap: 24px;
+                border-top: 1px solid var(--border);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 100px 24px 60px;
+            }
+
+            .cta-group {
+                flex-direction: column;
+            }
+
+            .cta-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            section {
+                padding: 60px 24px;
+            }
+
+            .section-header {
+                margin-bottom: 48px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .interface-grid {
+                gap: 80px;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="nav">
+        <div class="nav-content">
+            <div class="logo">
+                <div class="logo-icon">FE</div>
+                <span>FarmEye</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#interface">Interface</a></li>
+                <li><a href="#flight-data">Flight Data</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="hero-glow"></div>
+            <div class="hero-grid"></div>
+        </div>
+        <div class="hero-content">
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                Desktop Application - Coming Soon
+            </div>
+            <h1>FarmEye Control System</h1>
+            <p class="tagline">Advanced agricultural drone supervision and management powered by AI-driven precision agriculture</p>
+            <div class="cta-group">
+                <a href="#interface" class="cta-button primary">
+                    Explore Interface
+                    <span>→</span>
+                </a>
+                <a href="#contact" class="cta-button secondary">
+                    Get in Touch
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <div class="section-label">Capabilities</div>
+            <h2 class="section-title">Core Features</h2>
+            <p class="section-subtitle">Enterprise-grade drone control with real-time monitoring, AI-powered analytics, and comprehensive mission management</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🛰️</div>
+                <h3>Real-time Monitoring</h3>
+                <p>Live visualization of drone location over satellite maps with comprehensive operational status and telemetry data.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🗺️</div>
+                <h3>Mission Planning</h3>
+                <p>Configure autonomous flight missions with custom field dimensions, waypoints, and advanced safety parameters.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Inference Engine</h3>
+                <p>YOLO object detection with DBSCAN clustering for precise agricultural feature mapping and crop analysis.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Flight Analytics</h3>
+                <p>Comprehensive telemetry monitoring with real-time system health assessment and performance metrics.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📦</div>
+                <h3>Blackbox Recorder</h3>
+                <p>High-frequency telemetry logging for mission replay, detailed post-analysis, and compliance reporting.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Safety Systems</h3>
+                <p>Geofence boundaries, failsafe conditions, and real-time alerts for comprehensive risk mitigation.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interface Showcase -->
+    <section id="interface" class="interface-showcase">
+        <div class="section-header">
+            <div class="section-label">User Experience</div>
+            <h2 class="section-title">Application Interface</h2>
+            <p class="section-subtitle">Intuitive design meets powerful functionality</p>
+        </div>
+        
+        <div class="interface-grid">
+            <div class="interface-item">
+                <div class="interface-visual">
+                    <div class="interface-placeholder">
+                        <div class="placeholder-icon">🎯</div>
+                        <div class="placeholder-text">Main Dashboard</div>
+                    </div>
+                </div>
+                <div class="interface-details">
+                    <h3>Main Dashboard</h3>
+                    <p>The central command center providing real-time visualization of drone location over high-resolution satellite maps with comprehensive system status monitoring.</p>
+                    <ul class="interface-features">
+                        <li>Real-time GPS tracking and position overlay</li>
+                        <li>System connection and telemetry status</li>
+                        <li>Ultrasonic radar environmental mapping</li>
+                        <li>Flight mode and arming state indicators</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="interface-item">
+                <div class="interface-visual">
+                    <div class="interface-placeholder">
+                        <div class="placeholder-icon">🗺️</div>
+                        <div class="placeholder-text">Mission Planner</div>
+                    </div>
+                </div>
+                <div class="interface-details">
+                    <h3>Mission Planner</h3>
+                    <p>Configure autonomous agricultural flight missions with precision parameters tailored to your specific crop monitoring requirements.</p>
+                    <ul class="interface-features">
+                        <li>Field boundary and dimension definition</li>
+                        <li>Flight altitude and speed optimization</li>
+                        <li>Camera FOV and overlap configuration</li>
+                        <li>Waypoint management and path planning</li>
+                        <li>Geofence and safety zone creation</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="interface-item">
+                <div class="interface-visual">
+                    <div class="interface-placeholder">
+                        <div class="placeholder-icon">🤖</div>
+                        <div class="placeholder-text">AI Inference</div>
+                    </div>
+                </div>
+                <div class="interface-details">
+                    <h3>AI Inference Engine</h3>
+                    <p>Deploy state-of-the-art YOLO object detection combined with DBSCAN clustering for real-time agricultural feature analysis.</p>
+                    <ul class="interface-features">
+                        <li>Custom YOLO model deployment</li>
+                        <li>Detection confidence threshold tuning</li>
+                        <li>DBSCAN spatial consistency filtering</li>
+                        <li>Temporal detection frame aggregation</li>
+                        <li>Precision crop health mapping</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="interface-item">
+                <div class="interface-visual">
+                    <div class="interface-placeholder">
+                        <div class="placeholder-icon">📦</div>
+                        <div class="placeholder-text">Data Logger</div>
+                    </div>
+                </div>
+                <div class="interface-details">
+                    <h3>Blackbox Recorder</h3>
+                    <p>High-frequency telemetry logging system for comprehensive mission analysis, compliance reporting, and system diagnostics.</p>
+                    <ul class="interface-features">
+                        <li>CSV format with timestamped entries</li>
+                        <li>Configurable logging frequency</li>
+                        <li>Real-time recording statistics</li>
+                        <li>Mission replay and visualization</li>
+                        <li>Export and analysis tools integration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flight Data Section -->
+    <section id="flight-data" class="flight-data">
+        <div class="section-header">
+            <div class="section-label">Telemetry</div>
+            <h2 class="section-title">Flight Data Monitoring</h2>
+            <p class="section-subtitle">Comprehensive real-time telemetry and system health assessment</p>
+        </div>
+        
+        <div class="data-grid">
+            <div class="data-card">
+                <div class="data-icon">🔋</div>
+                <h3>Battery Metrics</h3>
+                <p>Monitor voltage, current, capacity, temperature, and health with color-coded indicators for abnormal conditions.</p>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-icon">⚙️</div>
+                <h3>System Status</h3>
+                <p>Vehicle arming state, control mode, navigation state, pre-flight checks, and failsafe conditions.</p>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-icon">🌐</div>
+                <h3>GPS Metrics</h3>
+                <p>Fix type, satellite count, position errors, and real-time accuracy tracking throughout missions.</p>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-icon">📍</div>
+                <h3>Position Data</h3>
+                <p>Absolute altitude, AGL, XYZ position, speed, and comprehensive flight profile visualization.</p>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-icon">📈</div>
+                <h3>Sensor Data</h3>
+                <p>IMU measurements including roll, pitch, yaw, gyroscope rates, and linear accelerations.</p>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-icon">🎮</div>
+                <h3>Control Inputs</h3>
+                <p>Commanded values for roll, pitch, yaw, and throttle with real-time evolution graphs.</p>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-icon">🚨</div>
+                <h3>Failsafe Flags</h3>
+                <p>Real-time alerts for low battery, signal loss, geofence violations, and system failures.</p>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-icon">📊</div>
+                <h3>Analytics</h3>
+                <p>Mission statistics, performance metrics, and historical data comparison tools.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="section-header">
+            <div class="section-label">Connect</div>
+            <h2 class="section-title">Get Started with FarmEye</h2>
+            <p class="section-subtitle">Transform your agricultural operations with precision drone technology</p>
+        </div>
+        
+        <a href="mailto:farm_eye@gmail.com" class="cta-button primary">Contact Us</a>
+
+        <div class="contact-info">
+            <div class="contact-card">
+                <h3>Email</h3>
+                <p>farm_eye@gmail.com</p>
+            </div>
+            <div class="contact-card">
+                <h3>Phone</h3>
+                <p>+213 558 395 217</p>
+            </div>
+            <div class="contact-card">
+                <h3>Location</h3>
+                <p>Sétif, Algeria</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <div class="logo-icon">FE</div>
+                <span>FarmEye</span>
+            </div>
+            <div class="footer-text">
+                <p>&copy; 2025 FarmEye Control Application. Precision Agriculture Management System.</p>
+                <p>University of Ferhat Abbas Sétif 1 - Faculty of Technology</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        const nav = document.getElementById('nav');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.textContent = '☰';
+            });
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const navHeight = nav.offsetHeight;
+                    const targetPosition = target.offsetTop - navHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            
+            if (currentScroll > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.feature-card, .data-card, .interface-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html
