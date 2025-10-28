@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FarmEye - Agricultural Drone Control System</title>
+    <title>FarmEye OS - Detect The Unexpected From Above</title>
     <style>
         * {
             margin: 0;
@@ -75,6 +75,12 @@
         }
 
         .logo-icon {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .logo-icon-fallback {
             width: 40px;
             height: 40px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
@@ -346,28 +352,66 @@
             line-height: 1.6;
         }
 
-        /* Features Section */
-        .features {
+        /* About Section */
+        .about {
             background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-dark-elevated) 100%);
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 32px;
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
         }
 
-        .feature-card {
+        .about-content p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .about-highlight {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 48px;
+        }
+
+        .about-highlight h3 {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .about-highlight p {
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            background: var(--bg-dark);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin-top: 60px;
+        }
+
+        .step-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 24px;
             padding: 40px;
+            text-align: center;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            overflow: hidden;
         }
 
-        .feature-card::before {
+        .step-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -379,18 +423,71 @@
             transition: opacity 0.4s;
         }
 
-        .feature-card:hover {
+        .step-card:hover {
             background: rgba(255, 255, 255, 0.05);
             transform: translateY(-8px);
             border-color: rgba(0, 149, 142, 0.3);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        .feature-card:hover::before {
+        .step-card:hover::before {
             opacity: 1;
         }
 
-        .feature-icon {
+        .step-number {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--bg-dark);
+            margin: 0 auto 24px;
+            box-shadow: 0 8px 24px rgba(0, 149, 142, 0.3);
+        }
+
+        .step-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .step-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* Services Section */
+        .services {
+            background: linear-gradient(180deg, var(--bg-dark-elevated) 0%, #001a1a 100%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+        }
+
+        .service-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .service-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-8px);
+            border-color: rgba(0, 149, 142, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .service-icon {
             width: 64px;
             height: 64px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
@@ -401,15 +498,89 @@
             font-size: 32px;
             margin-bottom: 24px;
             box-shadow: 0 8px 24px rgba(0, 149, 142, 0.3);
-            transition: transform 0.4s;
         }
 
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
+        .service-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .service-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* Demo Section */
+        .demo {
+            background: var(--bg-dark);
+        }
+
+        .demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Features Section */
+        .features {
+            background: linear-gradient(180deg, var(--bg-dark-elevated) 0%, var(--bg-dark) 100%);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-4px);
+            border-color: rgba(0, 149, 142, 0.3);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 20px;
+            box-shadow: 0 6px 20px rgba(0, 149, 142, 0.3);
         }
 
         .feature-card h3 {
-            font-size: 22px;
+            font-size: 19px;
             margin-bottom: 12px;
             color: var(--text-primary);
             font-weight: 600;
@@ -417,13 +588,13 @@
 
         .feature-card p {
             color: var(--text-secondary);
-            line-height: 1.6;
-            font-size: 15px;
+            line-height: 1.5;
+            font-size: 14px;
         }
 
         /* Interface Showcase */
         .interface-showcase {
-            background: linear-gradient(180deg, var(--bg-dark-elevated) 0%, #001a1a 100%);
+            background: linear-gradient(180deg, #001a1a 0%, var(--bg-dark-elevated) 100%);
         }
 
         .interface-grid {
@@ -463,6 +634,13 @@
 
         .interface-visual:hover {
             transform: scale(1.02);
+        }
+
+        .interface-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .interface-placeholder {
@@ -523,102 +701,27 @@
             font-weight: bold;
             font-size: 18px;
         }
-
-        /* Flight Data Section */
-        .flight-data {
-            background: var(--bg-dark);
-        }
-
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        .data-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 32px;
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .data-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-4px);
-            border-color: rgba(0, 149, 142, 0.3);
-        }
-
-        .data-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin: 0 auto 20px;
-            box-shadow: 0 6px 20px rgba(0, 149, 142, 0.3);
-        }
-
-        .data-card h3 {
-            font-size: 19px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .data-card p {
-            color: var(--text-secondary);
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        /* Contact Section */
         .contact {
             background: linear-gradient(180deg, var(--bg-dark) 0%, #001f1d 100%);
             text-align: center;
         }
 
-        .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 48px;
-            margin-top: 60px;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
+        .contact .section-subtitle {
+            margin-bottom: 40px;
         }
 
-        .contact-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 32px;
-            transition: all 0.3s;
-        }
-
-        .contact-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: var(--primary);
-            transform: translateY(-4px);
-        }
-
-        .contact-card h3 {
-            color: var(--primary);
-            margin-bottom: 12px;
-            font-size: 16px;
+        .coming-soon-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 149, 142, 0.1);
+            border: 1px solid rgba(0, 149, 142, 0.3);
+            padding: 20px 40px;
+            border-radius: 100px;
+            font-size: 18px;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .contact-card p {
-            color: var(--text-primary);
-            font-size: 17px;
-            font-weight: 500;
+            color: var(--primary);
+            margin-top: 20px;
         }
 
         /* Footer */
@@ -662,15 +765,6 @@
 
             section {
                 padding: 80px 32px;
-            }
-
-            .interface-item {
-                grid-template-columns: 1fr;
-                gap: 48px;
-            }
-
-            .interface-item:nth-child(even) {
-                direction: ltr;
             }
         }
 
@@ -717,21 +811,10 @@
                 margin-bottom: 48px;
             }
 
+            .steps-grid,
+            .services-grid,
             .features-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .interface-grid {
-                gap: 80px;
-            }
-
-            .data-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .contact-info {
-                grid-template-columns: 1fr;
-                gap: 24px;
             }
         }
     </style>
@@ -741,13 +824,17 @@
     <nav id="nav">
         <div class="nav-content">
             <div class="logo">
-                <div class="logo-icon">FE</div>
+                <img src="images/logo.png" alt="FarmEye Logo" class="logo-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="logo-icon-fallback" style="display:none;">FE</div>
                 <span>FarmEye</span>
             </div>
             <ul class="nav-links" id="navLinks">
+                <li><a href="#about">About</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#app">FarmEye OS</a></li>
+                <li><a href="#demo">Demo</a></li>
                 <li><a href="#features">Features</a></li>
-                <li><a href="#interface">Interface</a></li>
-                <li><a href="#flight-data">Flight Data</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
@@ -763,18 +850,204 @@
         <div class="hero-content">
             <div class="status-badge">
                 <span class="status-dot"></span>
-                Desktop Application - Coming Soon
+                Desktop Available - Mobile Coming Soon
             </div>
-            <h1>FarmEye Control System</h1>
-            <p class="tagline">Advanced agricultural drone supervision and management powered by AI-driven precision agriculture</p>
+            <h1>Detect The Unexpected<br>From Above</h1>
+            <p class="tagline">AI-powered aerial mapping and farm insights to help you see your fields clearly and make smarter decisions</p>
             <div class="cta-group">
-                <a href="#interface" class="cta-button primary">
-                    Explore Interface
+                <a href="#demo" class="cta-button primary">
+                    Watch Demo
                     <span>→</span>
                 </a>
-                <a href="#contact" class="cta-button secondary">
-                    Get in Touch
+                <a href="#how-it-works" class="cta-button secondary">
+                    Learn More
                 </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="section-header">
+            <div class="section-label">About Us</div>
+            <h2 class="section-title">Agricultural Technology That Works</h2>
+        </div>
+        
+        <div class="about-content">
+            <p>FarmEye is an agricultural technology service that combines drones and AI to help farmers improve efficiency and productivity.</p>
+            
+            <p>We deliver precise 2D farm maps with real-time object detection, classification, and counting — giving every farmer clear insights to manage their fields smarter.</p>
+            
+            <div class="about-highlight">
+                <h3>Our Vision</h3>
+                <p>At FarmEye, our vision is to help every farmer see their fields clearly, detect problems early, and make smarter decisions with the power of AI and drones.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="section-header">
+            <div class="section-label">Process</div>
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Simple and efficient — from booking to insights in four easy steps</p>
+        </div>
+        
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Book a Scan</h3>
+                <p>Tell us your farm size and location. We'll schedule a convenient time for your aerial mapping mission.</p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Tell Us What to Map</h3>
+                <p>Choose what you want to detect: crops, weeds, equipment, trees, or other farm objects.</p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Drone Flight & Data Capture</h3>
+                <p>We scan your fields with precision using advanced drone technology and high-resolution cameras.</p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h3>AI-Powered Mapping</h3>
+                <p>Objects are detected, classified, and pinned on a 2D map in real-time, ready for your review.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="section-header">
+            <div class="section-label">What We Offer</div>
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Comprehensive agricultural mapping solutions tailored to your needs</p>
+        </div>
+        
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🌾</div>
+                <h3>Crop & Tree Mapping</h3>
+                <p>Detailed mapping of your crops and trees with accurate counts, health status, and spatial distribution analysis.</p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🔍</div>
+                <h3>Weed & Pest Detection</h3>
+                <p>Early detection of weeds, pests, and diseases to help you take action before problems spread across your fields.</p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Plant Counting & Analysis</h3>
+                <p>Precise counting and density analysis of plants, trees, or even weeds to optimize your farm management.</p>
+            </div>
+        </div>
+
+        <div class="about-highlight" style="margin-top: 60px;">
+            <h3>What We Deliver</h3>
+            <p style="margin-bottom: 16px;">High-precision 2D farm maps with labeled detections customized to your farm's specific needs.</p>
+            <p style="margin-bottom: 16px;">Real-time object detection and localization to pinpoint exactly where attention is needed.</p>
+            <p style="margin-bottom: 0;">Accurate counting and density analysis to help you make data-driven decisions.</p>
+        </div>
+    </section>
+
+    <!-- App Interface Section -->
+    <section id="app" class="interface-showcase">
+        <div class="section-header">
+            <div class="section-label">FarmEye OS</div>
+            <h2 class="section-title">Powerful Desktop Application</h2>
+            <p class="section-subtitle">Everything you need to control and monitor your agricultural drone missions</p>
+        </div>
+        
+        <div class="interface-grid">
+            <div class="interface-item">
+                <div class="interface-visual">
+                    <img src="images/dashboard.png" alt="FarmEye OS Live Dashboard" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'interface-placeholder\'><div class=\'placeholder-icon\'>🎯</div><div class=\'placeholder-text\'>Live Dashboard</div></div>';">
+                </div>
+                <div class="interface-details">
+                    <h3>Live Map Dashboard</h3>
+                    <p>See your drone's exact location in real-time on satellite maps. Monitor flight status, battery levels, and system health at a glance.</p>
+                    <ul class="interface-features">
+                        <li>Real-time GPS tracking on satellite maps</li>
+                        <li>Live system status and connection monitoring</li>
+                        <li>Environmental sensing and obstacle detection</li>
+                        <li>Flight mode indicators and controls</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="interface-item">
+                <div class="interface-visual">
+                    <img src="images/mission-planner.png" alt="FarmEye OS Mission Planner" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'interface-placeholder\'><div class=\'placeholder-icon\'>🗺️</div><div class=\'placeholder-text\'>Mission Planner</div></div>';">
+                </div>
+                <div class="interface-details">
+                    <h3>Easy Mission Planning</h3>
+                    <p>Design your flight missions with simple tools. Just define your field boundaries and let FarmEye OS handle the rest.</p>
+                    <ul class="interface-features">
+                        <li>Draw field boundaries on the map</li>
+                        <li>Set flight height and speed automatically</li>
+                        <li>Optimize coverage for best results</li>
+                        <li>Safety zones and flight restrictions</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="interface-item">
+                <div class="interface-visual">
+                    <img src="images/ai-detection.png" alt="FarmEye OS AI Detection" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'interface-placeholder\'><div class=\'placeholder-icon\'>🤖</div><div class=\'placeholder-text\'>AI Detection</div></div>';">
+                </div>
+                <div class="interface-details">
+                    <h3>Real-Time AI Detection</h3>
+                    <p>Watch as objects are automatically detected and marked on your map during flight. No technical knowledge required.</p>
+                    <ul class="interface-features">
+                        <li>Automatic crop and weed detection</li>
+                        <li>Instant object classification</li>
+                        <li>Smart filtering for accurate results</li>
+                        <li>Live detection counts and statistics</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="interface-item">
+                <div class="interface-visual">
+                    <img src="images/flight-records.png" alt="FarmEye OS Flight Records" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'interface-placeholder\'><div class=\'placeholder-icon\'>📊</div><div class=\'placeholder-text\'>Flight Records</div></div>';">
+                </div>
+                <div class="interface-details">
+                    <h3>Flight Data Recording</h3>
+                    <p>Every mission is automatically recorded. Review past flights, analyze patterns, and track your farm's changes over time.</p>
+                    <ul class="interface-features">
+                        <li>Automatic flight data logging</li>
+                        <li>Mission history and replay</li>
+                        <li>Export data for analysis</li>
+                        <li>Performance tracking and reports</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo">
+        <div class="section-header">
+            <div class="section-label">See It In Action</div>
+            <h2 class="section-title">FarmEye OS Demo</h2>
+            <p class="section-subtitle">Watch a simulation test of our desktop control system in action</p>
+        </div>
+        
+        <div class="demo-container">
+            <div class="video-wrapper">
+                <iframe 
+                    src="https://www.youtube.com/embed/WTERQG-I65U" 
+                    title="FarmEye OS Demo" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
             </div>
         </div>
     </section>
@@ -782,195 +1055,40 @@
     <!-- Features Section -->
     <section id="features" class="features">
         <div class="section-header">
-            <div class="section-label">Capabilities</div>
-            <h2 class="section-title">Core Features</h2>
-            <p class="section-subtitle">Enterprise-grade drone control with real-time monitoring, AI-powered analytics, and comprehensive mission management</p>
+            <div class="section-label">Why Choose FarmEye</div>
+            <h2 class="section-title">Key Features</h2>
+            <p class="section-subtitle">Everything you need to manage your farm with confidence</p>
         </div>
         
         <div class="features-grid">
             <div class="feature-card">
-                <div class="feature-icon">🛰️</div>
-                <h3>Real-time Monitoring</h3>
-                <p>Live visualization of drone location over satellite maps with comprehensive operational status and telemetry data.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">🗺️</div>
-                <h3>Mission Planning</h3>
-                <p>Configure autonomous flight missions with custom field dimensions, waypoints, and advanced safety parameters.</p>
+                <div class="feature-icon">📱</div>
+                <h3>Real-Time Monitoring</h3>
+                <p>Track drone operations live with satellite map overlay and system status updates.</p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">🤖</div>
-                <h3>AI Inference Engine</h3>
-                <p>YOLO object detection with DBSCAN clustering for precise agricultural feature mapping and crop analysis.</p>
+                <h3>AI-Powered Detection</h3>
+                <p>Advanced object detection and classification that learns and adapts to your farm.</p>
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Flight Analytics</h3>
-                <p>Comprehensive telemetry monitoring with real-time system health assessment and performance metrics.</p>
+                <div class="feature-icon">📈</div>
+                <h3>Smart Planning</h3>
+                <p>Optimize farm operations with up-to-date maps and actionable insights.</p>
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon">📦</div>
-                <h3>Blackbox Recorder</h3>
-                <p>High-frequency telemetry logging for mission replay, detailed post-analysis, and compliance reporting.</p>
+                <div class="feature-icon">🎮</div>
+                <h3>Easy Mission Control</h3>
+                <p>Configure flight missions with simple controls — no technical expertise needed.</p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">🛡️</div>
-                <h3>Safety Systems</h3>
-                <p>Geofence boundaries, failsafe conditions, and real-time alerts for comprehensive risk mitigation.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Interface Showcase -->
-    <section id="interface" class="interface-showcase">
-        <div class="section-header">
-            <div class="section-label">User Experience</div>
-            <h2 class="section-title">Application Interface</h2>
-            <p class="section-subtitle">Intuitive design meets powerful functionality</p>
-        </div>
-        
-        <div class="interface-grid">
-            <div class="interface-item">
-                <div class="interface-visual">
-                    <div class="interface-placeholder">
-                        <div class="placeholder-icon">🎯</div>
-                        <div class="placeholder-text">Main Dashboard</div>
-                    </div>
-                </div>
-                <div class="interface-details">
-                    <h3>Main Dashboard</h3>
-                    <p>The central command center providing real-time visualization of drone location over high-resolution satellite maps with comprehensive system status monitoring.</p>
-                    <ul class="interface-features">
-                        <li>Real-time GPS tracking and position overlay</li>
-                        <li>System connection and telemetry status</li>
-                        <li>Ultrasonic radar environmental mapping</li>
-                        <li>Flight mode and arming state indicators</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="interface-item">
-                <div class="interface-visual">
-                    <div class="interface-placeholder">
-                        <div class="placeholder-icon">🗺️</div>
-                        <div class="placeholder-text">Mission Planner</div>
-                    </div>
-                </div>
-                <div class="interface-details">
-                    <h3>Mission Planner</h3>
-                    <p>Configure autonomous agricultural flight missions with precision parameters tailored to your specific crop monitoring requirements.</p>
-                    <ul class="interface-features">
-                        <li>Field boundary and dimension definition</li>
-                        <li>Flight altitude and speed optimization</li>
-                        <li>Camera FOV and overlap configuration</li>
-                        <li>Waypoint management and path planning</li>
-                        <li>Geofence and safety zone creation</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="interface-item">
-                <div class="interface-visual">
-                    <div class="interface-placeholder">
-                        <div class="placeholder-icon">🤖</div>
-                        <div class="placeholder-text">AI Inference</div>
-                    </div>
-                </div>
-                <div class="interface-details">
-                    <h3>AI Inference Engine</h3>
-                    <p>Deploy state-of-the-art YOLO object detection combined with DBSCAN clustering for real-time agricultural feature analysis.</p>
-                    <ul class="interface-features">
-                        <li>Custom YOLO model deployment</li>
-                        <li>Detection confidence threshold tuning</li>
-                        <li>DBSCAN spatial consistency filtering</li>
-                        <li>Temporal detection frame aggregation</li>
-                        <li>Precision crop health mapping</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="interface-item">
-                <div class="interface-visual">
-                    <div class="interface-placeholder">
-                        <div class="placeholder-icon">📦</div>
-                        <div class="placeholder-text">Data Logger</div>
-                    </div>
-                </div>
-                <div class="interface-details">
-                    <h3>Blackbox Recorder</h3>
-                    <p>High-frequency telemetry logging system for comprehensive mission analysis, compliance reporting, and system diagnostics.</p>
-                    <ul class="interface-features">
-                        <li>CSV format with timestamped entries</li>
-                        <li>Configurable logging frequency</li>
-                        <li>Real-time recording statistics</li>
-                        <li>Mission replay and visualization</li>
-                        <li>Export and analysis tools integration</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Flight Data Section -->
-    <section id="flight-data" class="flight-data">
-        <div class="section-header">
-            <div class="section-label">Telemetry</div>
-            <h2 class="section-title">Flight Data Monitoring</h2>
-            <p class="section-subtitle">Comprehensive real-time telemetry and system health assessment</p>
-        </div>
-        
-        <div class="data-grid">
-            <div class="data-card">
-                <div class="data-icon">🔋</div>
-                <h3>Battery Metrics</h3>
-                <p>Monitor voltage, current, capacity, temperature, and health with color-coded indicators for abnormal conditions.</p>
-            </div>
-            
-            <div class="data-card">
-                <div class="data-icon">⚙️</div>
-                <h3>System Status</h3>
-                <p>Vehicle arming state, control mode, navigation state, pre-flight checks, and failsafe conditions.</p>
-            </div>
-            
-            <div class="data-card">
-                <div class="data-icon">🌐</div>
-                <h3>GPS Metrics</h3>
-                <p>Fix type, satellite count, position errors, and real-time accuracy tracking throughout missions.</p>
-            </div>
-            
-            <div class="data-card">
-                <div class="data-icon">📍</div>
-                <h3>Position Data</h3>
-                <p>Absolute altitude, AGL, XYZ position, speed, and comprehensive flight profile visualization.</p>
-            </div>
-            
-            <div class="data-card">
-                <div class="data-icon">📈</div>
-                <h3>Sensor Data</h3>
-                <p>IMU measurements including roll, pitch, yaw, gyroscope rates, and linear accelerations.</p>
-            </div>
-            
-            <div class="data-card">
-                <div class="data-icon">🎮</div>
-                <h3>Control Inputs</h3>
-                <p>Commanded values for roll, pitch, yaw, and throttle with real-time evolution graphs.</p>
-            </div>
-            
-            <div class="data-card">
-                <div class="data-icon">🚨</div>
-                <h3>Failsafe Flags</h3>
-                <p>Real-time alerts for low battery, signal loss, geofence violations, and system failures.</p>
-            </div>
-            
-            <div class="data-card">
-                <div class="data-icon">📊</div>
-                <h3>Analytics</h3>
-                <p>Mission statistics, performance metrics, and historical data comparison tools.</p>
+                <h3>Built-In Safety</h3>
+                <p>Automated safety systems ensure secure operations with geofencing and alerts.</p>
             </div>
         </div>
     </section>
@@ -978,38 +1096,31 @@
     <!-- Contact Section -->
     <section class="contact" id="contact">
         <div class="section-header">
-            <div class="section-label">Connect</div>
-            <h2 class="section-title">Get Started with FarmEye</h2>
-            <p class="section-subtitle">Transform your agricultural operations with precision drone technology</p>
+            <div class="section-label">Get Started</div>
+            <h2 class="section-title">Ready to Transform Your Farm?</h2>
+            <p class="section-subtitle">Join the future of precision agriculture with FarmEye</p>
         </div>
         
-        <a href="mailto:farm_eye@gmail.com" class="cta-button primary">Contact Us</a>
-
-        <div class="contact-info">
-            <div class="contact-card">
-                <h3>Email</h3>
-                <p>farm_eye@gmail.com</p>
-            </div>
-            <div class="contact-card">
-                <h3>Phone</h3>
-                <p>+213 558 395 217</p>
-            </div>
-            <div class="contact-card">
-                <h3>Location</h3>
-                <p>Sétif, Algeria</p>
-            </div>
+        <div class="coming-soon-badge">
+            <span class="status-dot"></span>
+            Contact Information Coming Soon
         </div>
+        
+        <p style="color: var(--text-secondary); margin-top: 32px; font-size: 16px;">
+            We're currently preparing our contact channels. Check back soon for more information!
+        </p>
     </section>
 
     <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-logo">
-                <div class="logo-icon">FE</div>
+                <img src="images/logo.png" alt="FarmEye Logo" class="logo-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="logo-icon-fallback" style="display:none;">FE</div>
                 <span>FarmEye</span>
             </div>
             <div class="footer-text">
-                <p>&copy; 2025 FarmEye Control Application. Precision Agriculture Management System.</p>
+                <p>&copy; 2025 FarmEye OS. Precision Agriculture Technology.</p>
                 <p>University of Ferhat Abbas Sétif 1 - Faculty of Technology</p>
             </div>
         </div>
@@ -1080,7 +1191,7 @@
         }, observerOptions);
 
         // Observe elements for animation
-        document.querySelectorAll('.feature-card, .data-card, .interface-item').forEach(el => {
+        document.querySelectorAll('.step-card, .service-card, .feature-card').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
@@ -1088,4 +1199,4 @@
         });
     </script>
 </body>
-</html
+
