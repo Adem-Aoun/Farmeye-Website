@@ -86,6 +86,7 @@
   nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 10px;
           text-decoration: none; font-size: 15px; font-weight: 500; color: var(--ink-2); }
   nav a:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 7%, transparent); }
+  nav a[aria-current="true"] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--brand); border-radius: 10px 10px 0 0; }
   .menu-btn { display: none; min-height: 44px; min-width: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px;
               background: transparent; color: var(--ink); font: 500 15px var(--font); cursor: pointer; }
 
@@ -108,6 +109,13 @@
   figure { margin: 0; }
   .map-frame { border-radius: 20px; overflow: hidden; border: 1px solid var(--line); background: #A7AE88; }
   .map-frame svg { width: 100%; height: auto; }
+  .legend { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 14px 0 0; padding: 0; font: 13px var(--mono); color: var(--ink-2); }
+  .legend li { display: inline-flex; align-items: center; gap: 8px; }
+  .sw { display: inline-block; width: 16px; height: 12px; }
+  .sw.weed { border: 2px solid #FF5A36; background: rgba(255,90,54,.2); }
+  .sw.tree { border: 2px solid #2BE0D2; background: rgba(43,224,210,.18); }
+  .sw.path { height: 0; border-top: 2px dotted var(--ink-2); }
+  .sw.bound { height: 0; border-top: 2px dashed var(--ink-2); }
   figcaption { margin-top: 12px; color: var(--ink-2); font-size: 14px; }
 
   /* The one orchestrated moment: detections land in the order the drone flies. */
@@ -123,6 +131,18 @@
   .vision .label { color: var(--ink-2); padding-top: 12px; }
   .vision p.big { font-size: clamp(24px, 3.2vw, 36px); line-height: 1.25; letter-spacing: -0.02em; font-weight: 550; max-width: 30em; text-wrap: pretty; }
   .vision p.big + p { margin-top: 24px; color: var(--ink-2); max-width: var(--measure); }
+
+  /* ---------- FarmEye OS stack ---------- */
+  .stack-grid { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 64px; align-items: start; }
+  .stack { position: relative; border: 1px dashed var(--ink-2); border-radius: 20px; padding: 36px 20px 20px; list-style: none; margin: 0; display: grid; gap: 10px; }
+  .stack::before { content: "FarmEye OS"; position: absolute; top: -12px; left: 20px; padding: 0 10px; background: var(--surface);
+                   font: 600 13px var(--mono); letter-spacing: .04em; color: var(--ink); }
+  .layer { display: grid; grid-template-columns: 140px minmax(0,1fr); gap: 16px; align-items: baseline; padding: 18px 20px; border: 1px solid var(--line);
+           border-radius: 12px; background: var(--panel); }
+  .layer h3 { font-size: 18px; }
+  .layer p { color: var(--ink-2); font-size: 16px; }
+  .layer.app { border-color: var(--brand); box-shadow: inset 4px 0 0 var(--brand); }
+  .layer.app h3 { color: var(--brand); }
 
   /* ---------- Services: a ruled list, not a card grid ---------- */
   .sec-head { max-width: 40em; margin-bottom: 56px; }
@@ -175,6 +195,7 @@
     .hero-grid { grid-template-columns: 1fr; gap: 48px; }
     .steps { grid-template-columns: repeat(2, minmax(0,1fr)); row-gap: 40px; }
     .steps::before { display: none; }
+    .stack-grid { gap: 48px; }
     .vision .grid { grid-template-columns: 1fr; gap: 8px; }
     .vision .label { padding-top: 0; }
   }
@@ -192,6 +213,8 @@
     .row { grid-template-columns: 1fr; gap: 8px; }
     .delivers { grid-template-columns: 1fr; gap: 20px; }
     .steps { grid-template-columns: 1fr; }
+    .stack-grid { grid-template-columns: 1fr; gap: 40px; }
+    .layer { grid-template-columns: 1fr; gap: 4px; }
     .shots { grid-template-columns: 1fr; }
     .actions .btn { width: 100%; }
   }
@@ -213,7 +236,8 @@
       <ul id="navList">
         <li><a href="#services">Services</a></li>
         <li><a href="#how-it-works">How it works</a></li>
-        <li><a href="#app">FarmEye OS</a></li>
+        <li><a href="#stack">FarmEye OS</a></li>
+        <li><a href="#app">FarmEye App</a></li>
         <li><a href="#demo">Demo</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -227,7 +251,7 @@
 <section class="hero" id="top">
   <div class="wrap hero-grid">
     <div>
-      <p class="status mono">Desktop ground control: available &nbsp;·&nbsp; Mobile app: coming soon</p>
+      <p class="status mono">FarmEye OS &nbsp;·&nbsp; FarmEye App for desktop: available &nbsp;·&nbsp; Mobile: coming soon</p>
       <h1>Detect the unexpected from above.</h1>
       <p class="lead">FarmEye flies a drone over your fields and hands back a 2D map with every crop, weed, tree and machine detected, labeled and counted.</p>
       <div class="actions">
@@ -311,6 +335,12 @@
           </g>
         </svg>
       </div>
+      <ul class="legend" aria-label="Map legend">
+        <li><i class="sw weed"></i>Weed</li>
+        <li><i class="sw tree"></i>Tree</li>
+        <li><i class="sw path"></i>Flight path</li>
+        <li><i class="sw bound"></i>Field boundary</li>
+      </ul>
       <figcaption>Illustrative output. Each detection is labeled by class with a confidence score, then counted.</figcaption>
     </figure>
   </div>
@@ -327,8 +357,24 @@
   </div>
 </div>
 
+<!-- FarmEye OS stack -->
+<section id="stack">
+  <div class="wrap stack-grid">
+    <div class="sec-head" style="margin-bottom:0">
+      <h2>FarmEye OS: one stack, from drone to decision.</h2>
+      <p class="lead">FarmEye OS is the whole system. It flies the drone, finds what is in your fields, puts it on a map, and gives you one place to run it all: the FarmEye App.</p>
+    </div>
+    <ol class="stack">
+      <li class="layer"><h3>Drone and camera</h3><p>Flies your field and captures high-resolution imagery.</p></li>
+      <li class="layer"><h3>AI detection</h3><p>Detects and classifies crops, weeds, trees and equipment.</p></li>
+      <li class="layer"><h3>2D mapping</h3><p>Pins every detection on a precise map and counts it.</p></li>
+      <li class="layer app"><h3>FarmEye App</h3><p>Plan the mission, watch the flight, review the map. This is where you work.</p></li>
+    </ol>
+  </div>
+</section>
+
 <!-- Services -->
-<section id="services">
+<section id="services" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head">
       <h2>What we map.</h2>
@@ -390,14 +436,14 @@
 <section id="app" class="app">
   <div class="wrap">
     <div class="sec-head">
-      <h2>FarmEye OS: ground control for every flight.</h2>
-      <p class="lead">The desktop application that plans, flies and records each mission.</p>
+      <h2>FarmEye App: ground control for every flight.</h2>
+      <p class="lead">The desktop app in FarmEye OS that plans, flies and records each mission.</p>
     </div>
 
     <div class="shots">
       <figure>
         <div class="window">
-          <img src="images/dashboard.png" alt="FarmEye OS main dashboard showing the drone's live position on a satellite map" loading="lazy"
+          <img src="images/dashboard.png" alt="FarmEye App main dashboard showing the drone's live position on a satellite map" loading="lazy"
                onerror="this.remove()">
           <div class="ph" aria-hidden="true">images/dashboard.png</div>
         </div>
@@ -407,16 +453,16 @@
 
       <figure>
         <div class="window">
-          <img src="images/mission-planner.png" alt="FarmEye OS mission planner with a field boundary drawn on the map" loading="lazy" onerror="this.remove()">
+          <img src="images/mission-planner.png" alt="FarmEye App mission planner with a field boundary drawn on the map" loading="lazy" onerror="this.remove()">
           <div class="ph" aria-hidden="true">images/mission-planner.png</div>
         </div>
         <h3>Mission planner</h3>
-        <figcaption>Draw the field boundary. FarmEye OS sets flight height, speed and coverage, and respects your safety zones.</figcaption>
+        <figcaption>Draw the field boundary. the app sets flight height, speed and coverage, and respects your safety zones.</figcaption>
       </figure>
 
       <figure>
         <div class="window">
-          <img src="images/ai-detection.png" alt="FarmEye OS live detection view with labeled objects on the map" loading="lazy" onerror="this.remove()">
+          <img src="images/ai-detection.png" alt="FarmEye App live detection view with labeled objects on the map" loading="lazy" onerror="this.remove()">
           <div class="ph" aria-hidden="true">images/ai-detection.png</div>
         </div>
         <h3>Live detection</h3>
@@ -425,7 +471,7 @@
 
       <figure>
         <div class="window">
-          <img src="images/flight-records.png" alt="FarmEye OS flight records list with mission history" loading="lazy" onerror="this.remove()">
+          <img src="images/flight-records.png" alt="FarmEye App flight records list with mission history" loading="lazy" onerror="this.remove()">
           <div class="ph" aria-hidden="true">images/flight-records.png</div>
         </div>
         <h3>Black box</h3>
@@ -433,7 +479,7 @@
       </figure>
     </div>
 
-    <p class="app-note mono"><span>Geofencing and alerts run on every flight.</span><span>Mobile app: coming soon.</span></p>
+    <p class="app-note mono"><span>Geofencing and alerts run on every flight.</span><span>FarmEye App for mobile: coming soon.</span></p>
   </div>
 </section>
 
@@ -442,10 +488,10 @@
   <div class="wrap">
     <div class="sec-head">
       <h2>See a simulated flight.</h2>
-      <p class="lead">A simulation test of the FarmEye OS desktop control system.</p>
+      <p class="lead">A simulation test of FarmEye OS, flown from the FarmEye App on desktop.</p>
     </div>
     <div class="video">
-      <iframe src="https://www.youtube.com/embed/WTERQG-I65U" title="FarmEye OS simulation demo" loading="lazy"
+      <iframe src="https://www.youtube.com/embed/WTERQG-I65U" title="FarmEye OS simulation demo, flown from the FarmEye App" loading="lazy"
               allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
   </div>
@@ -485,6 +531,14 @@
   list.addEventListener('click', e => {
     if (e.target.closest('a')) { list.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.textContent = 'Menu'; }
   });
+  const links = [...document.querySelectorAll('nav a')];
+  const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    const a = map.get(e.target.id); if (!a) return;
+    if (e.isIntersecting) { links.forEach(l => l.removeAttribute('aria-current')); a.setAttribute('aria-current', 'true'); }
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  map.forEach((_, id) => { const el = document.getElementById(id); if (el) io.observe(el); });
+
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && list.classList.contains('open')) { list.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.textContent = 'Menu'; btn.focus(); }
   });
