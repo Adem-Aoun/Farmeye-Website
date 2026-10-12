@@ -1,1201 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FarmEye OS </title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #00958e;
-            --primary-light: #00b5ad;
-            --primary-dark: #007973;
-            --bg-dark: #000000;
-            --bg-dark-elevated: #0a0a0a;
-            --bg-card: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
-            --text-primary: #f5f5f7;
-            --text-secondary: #a1a1a6;
-            --text-tertiary: #6e6e73;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px) saturate(180%);
-            z-index: 1000;
-            border-bottom: 1px solid var(--border);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        nav.scrolled {
-            background: rgba(0, 0, 0, 0.95);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .nav-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 16px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
-            transition: transform 0.3s;
-        }
-
-        .logo:hover {
-            transform: scale(1.02);
-        }
-
-        .logo-icon {
-            height: 40px;
-            width: auto;
-            object-fit: contain;
-        }
-        
-        .logo-icon-fallback {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: var(--bg-dark);
-            font-size: 18px;
-            box-shadow: 0 4px 12px rgba(0, 149, 142, 0.3);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 48px;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.3s;
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            transition: width 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--text-primary);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 28px;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-            transition: background 0.3s;
-        }
-
-        .mobile-menu-btn:hover {
-            background: var(--bg-card);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 120px 24px 80px;
-            background: linear-gradient(180deg, var(--bg-dark) 0%, #001f1d 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-bg {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        .hero-glow {
-            position: absolute;
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(0, 149, 142, 0.15) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: glow 8s ease-in-out infinite;
-        }
-
-        .hero-grid {
-            position: absolute;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(0, 149, 142, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 149, 142, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            opacity: 0.5;
-        }
-
-        @keyframes glow {
-            0%, 100% { 
-                transform: translate(-50%, -50%) scale(1); 
-                opacity: 0.5; 
-            }
-            50% { 
-                transform: translate(-50%, -50%) scale(1.3); 
-                opacity: 0.3; 
-            }
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 1000px;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0, 149, 142, 0.1);
-            border: 1px solid rgba(0, 149, 142, 0.3);
-            padding: 10px 20px;
-            border-radius: 100px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 32px;
-            animation: fadeInDown 0.8s ease-out;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: pulse-dot 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-
-        .hero h1 {
-            font-size: clamp(42px, 7vw, 80px);
-            font-weight: 700;
-            margin-bottom: 24px;
-            letter-spacing: -2px;
-            line-height: 1.1;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: fadeInUp 0.8s ease-out 0.2s backwards;
-        }
-
-        .hero .tagline {
-            font-size: clamp(18px, 3vw, 28px);
-            color: var(--text-secondary);
-            margin-bottom: 48px;
-            font-weight: 400;
-            line-height: 1.5;
-            animation: fadeInUp 0.8s ease-out 0.4s backwards;
-        }
-
-        .cta-group {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.8s ease-out 0.6s backwards;
-        }
-
-        .cta-button {
-            padding: 16px 36px;
-            border-radius: 100px;
-            text-decoration: none;
-            font-size: 17px;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-button.primary {
-            background: var(--primary);
-            color: var(--bg-dark);
-            box-shadow: 0 8px 24px rgba(0, 149, 142, 0.3);
-        }
-
-        .cta-button.primary:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(0, 149, 142, 0.4);
-        }
-
-        .cta-button.secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .cta-button.secondary:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-        }
-
-        /* Section Styling */
-        section {
-            padding: 120px 48px;
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-
-        .section-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 16px;
-        }
-
-        .section-title {
-            font-size: clamp(36px, 5vw, 56px);
-            font-weight: 700;
-            margin-bottom: 24px;
-            letter-spacing: -1.5px;
-            line-height: 1.1;
-        }
-
-        .section-subtitle {
-            font-size: clamp(16px, 2vw, 20px);
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* About Section */
-        .about {
-            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-dark-elevated) 100%);
-        }
-
-        .about-content {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .about-content p {
-            font-size: 18px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            margin-bottom: 24px;
-        }
-
-        .about-highlight {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 40px;
-            margin-top: 48px;
-        }
-
-        .about-highlight h3 {
-            font-size: 24px;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        .about-highlight p {
-            font-size: 17px;
-            line-height: 1.7;
-        }
-
-        /* How It Works */
-        .how-it-works {
-            background: var(--bg-dark);
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-            margin-top: 60px;
-        }
-
-        .step-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .step-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-
-        .step-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-8px);
-            border-color: rgba(0, 149, 142, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .step-card:hover::before {
-            opacity: 1;
-        }
-
-        .step-number {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--bg-dark);
-            margin: 0 auto 24px;
-            box-shadow: 0 8px 24px rgba(0, 149, 142, 0.3);
-        }
-
-        .step-card h3 {
-            font-size: 22px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        .step-card p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            font-size: 15px;
-        }
-
-        /* Services Section */
-        .services {
-            background: linear-gradient(180deg, var(--bg-dark-elevated) 0%, #001a1a 100%);
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 32px;
-        }
-
-        .service-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .service-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-8px);
-            border-color: rgba(0, 149, 142, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .service-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 24px rgba(0, 149, 142, 0.3);
-        }
-
-        .service-card h3 {
-            font-size: 22px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        .service-card p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            font-size: 15px;
-        }
-
-        /* Demo Section */
-        .demo {
-            background: var(--bg-dark);
-        }
-
-        .demo-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 20px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border);
-        }
-
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Features Section */
-        .features {
-            background: linear-gradient(180deg, var(--bg-dark-elevated) 0%, var(--bg-dark) 100%);
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 32px;
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .feature-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-4px);
-            border-color: rgba(0, 149, 142, 0.3);
-        }
-
-        .feature-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin: 0 auto 20px;
-            box-shadow: 0 6px 20px rgba(0, 149, 142, 0.3);
-        }
-
-        .feature-card h3 {
-            font-size: 19px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .feature-card p {
-            color: var(--text-secondary);
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        /* Interface Showcase */
-        .interface-showcase {
-            background: linear-gradient(180deg, #001a1a 0%, var(--bg-dark-elevated) 100%);
-        }
-
-        .interface-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 120px;
-        }
-
-        .interface-item {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-        }
-
-        .interface-item:nth-child(even) {
-            direction: rtl;
-        }
-
-        .interface-item:nth-child(even) > * {
-            direction: ltr;
-        }
-
-        .interface-visual {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border);
-            background: linear-gradient(135deg, rgba(0, 149, 142, 0.1) 0%, rgba(0, 0, 0, 0.5) 100%);
-            aspect-ratio: 16/10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.5s;
-        }
-
-        .interface-visual:hover {
-            transform: scale(1.02);
-        }
-
-        .interface-visual img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .interface-placeholder {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-        }
-
-        .placeholder-icon {
-            font-size: 64px;
-            opacity: 0.3;
-        }
-
-        .placeholder-text {
-            color: var(--text-tertiary);
-            font-size: 18px;
-            font-weight: 500;
-        }
-
-        .interface-details h3 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-            font-weight: 700;
-            letter-spacing: -1px;
-        }
-
-        .interface-details p {
-            color: var(--text-secondary);
-            margin-bottom: 28px;
-            font-size: 17px;
-            line-height: 1.6;
-        }
-
-        .interface-features {
-            list-style: none;
-            padding: 0;
-        }
-
-        .interface-features li {
-            color: var(--text-secondary);
-            margin-bottom: 14px;
-            padding-left: 28px;
-            position: relative;
-            font-size: 15px;
-        }
-
-        .interface-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .contact {
-            background: linear-gradient(180deg, var(--bg-dark) 0%, #001f1d 100%);
-            text-align: center;
-        }
-
-        .contact .section-subtitle {
-            margin-bottom: 40px;
-        }
-
-        .coming-soon-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(0, 149, 142, 0.1);
-            border: 1px solid rgba(0, 149, 142, 0.3);
-            padding: 20px 40px;
-            border-radius: 100px;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-top: 20px;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--bg-dark);
-            padding: 60px 48px 40px;
-            border-top: 1px solid var(--border);
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .footer-logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 24px;
-        }
-
-        .footer-text {
-            color: var(--text-tertiary);
-            font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .footer-text p:first-child {
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .nav-content {
-                padding: 16px 32px;
-            }
-
-            section {
-                padding: 80px 32px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: rgba(0, 0, 0, 0.98);
-                flex-direction: column;
-                padding: 24px;
-                gap: 24px;
-                border-top: 1px solid var(--border);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .hero {
-                padding: 100px 24px 60px;
-            }
-
-            .cta-group {
-                flex-direction: column;
-            }
-
-            .cta-button {
-                width: 100%;
-                justify-content: center;
-            }
-
-            section {
-                padding: 60px 24px;
-            }
-
-            .section-header {
-                margin-bottom: 48px;
-            }
-
-            .steps-grid,
-            .services-grid,
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>FarmEye OS — Aerial mapping for farms</title>
+<meta name="description" content="FarmEye flies drones over your fields and returns a 2D map with every crop, weed and tree detected, labeled and counted.">
+<style>
+  /* ---------- Tokens ----------
+     Colors are named by role. One color, one meaning:
+     brand  = interactive / identity
+     signal = "needs attention" (weeds, pests) — used nowhere else */
+  :root {
+    --surface: #F3F5EF;
+    --panel:   #FFFFFF;
+    --ink:     #16221A;   /* 14.96:1 on surface */
+    --ink-2:   #44554A;   /*  7.23:1 on surface */
+    --line:    #D5DBCF;
+    --brand:   #00706A;   /*  5.42:1 on surface */
+    --on-brand:#FFFFFF;   /*  5.96:1 on brand   */
+    --signal:  #B42318;   /*  5.99:1 on surface */
+
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+    --measure: 62ch;
+    --wrap: 1160px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface: #0F1511;
+      --panel:   #172019;
+      --ink:     #E8EEE6;  /* 15.68:1 */
+      --ink-2:   #A8B5AB;  /*  8.68:1 */
+      --line:    #2A362D;
+      --brand:   #3FC7BE;  /*  8.91:1 */
+      --on-brand:#07110F;  /*  9.24:1 */
+      --signal:  #FF8A70;  /*  8.03:1 */
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--ink);
+    font: 17px/1.6 var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+  img, svg, iframe { display: block; max-width: 100%; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; border-radius: 4px; }
+
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 32px; }
+  section { padding: 112px 0; }
+  .mono { font-family: var(--mono); font-size: 13px; letter-spacing: .02em; }
+
+  h1, h2, h3 { margin: 0; font-weight: 650; letter-spacing: -0.025em; text-wrap: balance; }
+  h1 { font-size: clamp(40px, 6.2vw, 72px); line-height: 1.02; letter-spacing: -0.035em; }
+  h2 { font-size: clamp(30px, 4vw, 44px); line-height: 1.1; }
+  h3 { font-size: 20px; line-height: 1.3; letter-spacing: -0.015em; }
+  p  { margin: 0; }
+  .lead { font-size: clamp(18px, 2vw, 21px); color: var(--ink-2); max-width: var(--measure); }
+
+  .skip { position: absolute; left: 16px; top: -64px; background: var(--brand); color: var(--on-brand);
+          padding: 12px 18px; border-radius: 8px; z-index: 100; font-weight: 600; }
+  .skip:focus { top: 12px; }
+
+  /* ---------- Header (functional layer: the only translucent element) ---------- */
+  header.site {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  @media (prefers-reduced-transparency: reduce) { header.site { background: var(--surface); backdrop-filter: none; -webkit-backdrop-filter: none; } }
+  .bar { display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 24px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 650; font-size: 20px; letter-spacing: -0.02em; min-height: 44px; }
+  .brand img { height: 32px; width: auto; }
+  .brand .fallback { display: none; width: 32px; height: 32px; border-radius: 8px; background: var(--brand); color: var(--on-brand);
+                     align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+  nav ul { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+  nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 10px;
+          text-decoration: none; font-size: 15px; font-weight: 500; color: var(--ink-2); }
+  nav a:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 7%, transparent); }
+  .menu-btn { display: none; min-height: 44px; min-width: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px;
+              background: transparent; color: var(--ink); font: 500 15px var(--font); cursor: pointer; }
+
+  /* ---------- Buttons ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px; border-radius: 12px;
+         font-weight: 600; font-size: 16px; text-decoration: none; transition: background .15s, border-color .15s; }
+  .btn.primary { background: var(--brand); color: var(--on-brand); }
+  .btn.primary:hover { background: color-mix(in srgb, var(--brand) 88%, var(--ink)); }
+  .btn.quiet { color: var(--ink); border: 1px solid var(--line); background: var(--panel); }
+  .btn.quiet:hover { border-color: var(--ink-2); }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 72px 0 96px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 64px; align-items: center; }
+  .status { color: var(--ink-2); margin-bottom: 24px; }
+  .hero h1 { margin-bottom: 24px; }
+  .hero .lead { margin-bottom: 36px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  figure { margin: 0; }
+  .map-frame { border-radius: 20px; overflow: hidden; border: 1px solid var(--line); background: #A7AE88; }
+  .map-frame svg { width: 100%; height: auto; }
+  figcaption { margin-top: 12px; color: var(--ink-2); font-size: 14px; }
+
+  /* The one orchestrated moment: detections land in the order the drone flies. */
+  @media (prefers-reduced-motion: no-preference) {
+    .det { animation: land .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--d, 0s); transform-box: fill-box; transform-origin: center; }
+    @keyframes land { from { opacity: 0; transform: scale(1.25); } }
+    .count { animation: land .5s ease-out both; animation-delay: 2.4s; }
+  }
+
+  /* ---------- Vision ---------- */
+  .vision { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--panel); padding: 96px 0; }
+  .vision .grid { display: grid; grid-template-columns: 200px minmax(0,1fr); gap: 32px; }
+  .vision .label { color: var(--ink-2); padding-top: 12px; }
+  .vision p.big { font-size: clamp(24px, 3.2vw, 36px); line-height: 1.25; letter-spacing: -0.02em; font-weight: 550; max-width: 30em; text-wrap: pretty; }
+  .vision p.big + p { margin-top: 24px; color: var(--ink-2); max-width: var(--measure); }
+
+  /* ---------- Services: a ruled list, not a card grid ---------- */
+  .sec-head { max-width: 40em; margin-bottom: 56px; }
+  .sec-head h2 { margin-bottom: 16px; }
+  .rows { border-top: 1px solid var(--line); }
+  .row { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.4fr); gap: 32px; padding: 32px 0; border-bottom: 1px solid var(--line); }
+  .row p { color: var(--ink-2); max-width: 52ch; }
+  .delivers { margin-top: 48px; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 32px; }
+  .delivers dt { font-weight: 600; margin-bottom: 4px; }
+  .delivers dd { margin: 0; color: var(--ink-2); font-size: 16px; }
+  .delivers-title { margin-top: 72px; color: var(--ink-2); }
+
+  /* ---------- How it works: waypoints on a flight line (a true sequence) ---------- */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 32px; position: relative; counter-reset: wp; }
+  .steps::before { content: ""; position: absolute; left: 0; right: 0; top: 15px; border-top: 2px dashed var(--line); }
+  .steps li { position: relative; padding-top: 56px; counter-increment: wp; }
+  .steps li::before {
+    content: counter(wp); position: absolute; top: 0; left: 0; width: 32px; height: 32px; border-radius: 50%;
+    background: var(--brand); color: var(--on-brand); display: grid; place-items: center; font: 600 14px var(--mono);
+  }
+  .steps h3 { margin-bottom: 8px; }
+  .steps p { color: var(--ink-2); font-size: 16px; }
+
+  /* ---------- App ---------- */
+  .app { background: var(--panel); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .shots { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 56px 40px; }
+  .window { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #0d120f; aspect-ratio: 16/10; position: relative; }
+  .window::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 28px; background: #1b231e;
+                    background-image: radial-gradient(circle at 14px 14px, #5b6a60 4px, transparent 5px), radial-gradient(circle at 30px 14px, #5b6a60 4px, transparent 5px), radial-gradient(circle at 46px 14px, #5b6a60 4px, transparent 5px); }
+  .window img { position: absolute; inset: 28px 0 0 0; width: 100%; height: calc(100% - 28px); object-fit: cover; }
+  .window .ph { position: absolute; inset: 28px 0 0 0; display: grid; place-items: center; color: #A8B5AB; font: 13px var(--mono); text-align: center; padding: 16px; }
+  .shots h3 { margin: 20px 0 6px; }
+  .shots figcaption { margin: 0; font-size: 16px; max-width: 46ch; }
+  .app-note { margin-top: 56px; display: flex; flex-wrap: wrap; gap: 8px 32px; color: var(--ink-2); }
+
+  /* ---------- Demo ---------- */
+  .video { position: relative; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  /* ---------- Contact / footer ---------- */
+  .contact { background: var(--panel); border-top: 1px solid var(--line); }
+  .contact .lead { margin-top: 16px; }
+  footer { padding: 40px 0 56px; color: var(--ink-2); font-size: 15px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; align-items: center; }
+  footer .brand { font-size: 17px; color: var(--ink); }
+  footer .brand img { height: 26px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+    .steps { grid-template-columns: repeat(2, minmax(0,1fr)); row-gap: 40px; }
+    .steps::before { display: none; }
+    .vision .grid { grid-template-columns: 1fr; gap: 8px; }
+    .vision .label { padding-top: 0; }
+  }
+  @media (max-width: 760px) {
+    .wrap { padding: 0 20px; }
+    section { padding: 72px 0; }
+    .hero { padding: 40px 0 64px; }
+    .menu-btn { display: inline-flex; align-items: center; }
+    nav ul { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0; padding: 8px 20px 16px;
+             background: var(--surface); border-bottom: 1px solid var(--line); }
+    nav ul.open { display: flex; }
+    .no-js nav ul { display: flex; position: static; flex-direction: row; flex-wrap: wrap; padding: 0; border: 0; background: none; }
+    .no-js .menu-btn { display: none; }
+    .bar { flex-wrap: wrap; }
+    .row { grid-template-columns: 1fr; gap: 8px; }
+    .delivers { grid-template-columns: 1fr; gap: 20px; }
+    .steps { grid-template-columns: 1fr; }
+    .shots { grid-template-columns: 1fr; }
+    .actions .btn { width: 100%; }
+  }
+</style>
 </head>
-<body>
-    <!-- Navigation -->
-    <nav id="nav">
-        <div class="nav-content">
-            <div class="logo">
-                <img src="images/logo.png" alt="FarmEye Logo" class="logo-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="logo-icon-fallback" style="display:none;">FE</div>
-                <span>FarmEye</span>
-            </div>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#about">About</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#app">FarmEye Application</a></li>
-                <li><a href="#demo">Demo</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
-        </div>
+<body class="no-js">
+<script>document.body.classList.remove('no-js');</script>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="FarmEye home">
+      <img src="images/logo.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <span class="fallback" aria-hidden="true">FE</span>
+      FarmEye
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navList">Menu</button>
+    <nav aria-label="Primary">
+      <ul id="navList">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#app">FarmEye OS</a></li>
+        <li><a href="#demo">Demo</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
     </nav>
+  </div>
+</header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-bg">
-            <div class="hero-glow"></div>
-            <div class="hero-grid"></div>
-        </div>
-        <div class="hero-content">
-            <div class="status-badge">
-                <span class="status-dot"></span>
-                Mobile Application Coming Soon
-            </div>
-            <h1>Detect The Unexpected<br>From Above</h1>
-            <p class="tagline">AI-powered aerial mapping and farm insights to help you see your fields clearly and make smarter decisions</p>
-            <div class="cta-group">
-                <a href="#demo" class="cta-button primary">
-                    Watch Demo
-                    <span>→</span>
-                </a>
-                <a href="#how-it-works" class="cta-button secondary">
-                    Learn More
-                </a>
-            </div>
-        </div>
-    </section>
+<main id="main">
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="section-header">
-            <div class="section-label">About Us</div>
-            <h2 class="section-title">Agricultural Technology That Works</h2>
-        </div>
-        
-        <div class="about-content">
-            <p>FarmEye is an agricultural technology service that combines drones and AI to help farmers improve efficiency and productivity.</p>
-            
-            <p>We deliver precise 2D farm maps with real-time object detection, classification, and counting — giving every farmer clear insights to manage their fields smarter.</p>
-            
-            <div class="about-highlight">
-                <h3>Our Vision</h3>
-                <p>At FarmEye, our vision is to help every farmer see their fields clearly, detect problems early, and make smarter decisions with the power of AI and drones.</p>
-            </div>
-        </div>
-    </section>
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="status mono">Desktop ground control: available &nbsp;·&nbsp; Mobile app: coming soon</p>
+      <h1>Detect the unexpected from above.</h1>
+      <p class="lead">FarmEye flies a drone over your fields and hands back a 2D map with every crop, weed, tree and machine detected, labeled and counted.</p>
+      <div class="actions">
+        <a class="btn primary" href="#demo">Watch the demo</a>
+        <a class="btn quiet" href="#how-it-works">How it works</a>
+      </div>
+    </div>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="how-it-works">
-        <div class="section-header">
-            <div class="section-label">Process</div>
-            <h2 class="section-title">How It Works</h2>
-            <p class="section-subtitle">Simple and efficient — from booking to insights in four easy steps</p>
+    <figure>
+      <div class="map-frame">
+        <svg viewBox="0 0 640 600" role="img" aria-labelledby="mapT mapD">
+          <title id="mapT">Example FarmEye scan of a field</title>
+          <desc id="mapD">Top-down map of a crop field with a zigzag drone flight path. Four weed patches and three trees are outlined with labeled detection boxes. A bar along the bottom reports 14 weeds, 38 trees and 212 crop rows.</desc>
+          <defs>
+            <pattern id="rows" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-8)">
+              <rect width="12" height="12" fill="#5A7D46"/>
+              <rect width="12" height="5" fill="#6B8E54"/>
+            </pattern>
+            <pattern id="rows2" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(76)">
+              <rect width="10" height="10" fill="#8C9A62"/>
+              <rect width="10" height="4" fill="#97A56C"/>
+            </pattern>
+          </defs>
+
+          <rect width="640" height="600" fill="#A7AE88"/>
+          <polygon points="0,0 60,0 40,110 0,130" fill="url(#rows2)"/>
+          <polygon points="470,330 640,300 640,420 520,440" fill="url(#rows2)"/>
+
+          <!-- main field -->
+          <polygon points="70,120 440,70 560,360 150,470" fill="url(#rows)"/>
+          <polygon points="70,120 440,70 560,360 150,470" fill="none" stroke="#F5F2E6" stroke-width="2" stroke-dasharray="7 6"/>
+
+          <!-- orchard -->
+          <polygon points="360,420 610,395 620,530 350,535" fill="#7C8F5A"/>
+          <g fill="#2E5A38">
+            <circle cx="400" cy="450" r="11"/><circle cx="440" cy="446" r="11"/><circle cx="480" cy="442" r="11"/><circle cx="520" cy="438" r="11"/><circle cx="560" cy="434" r="11"/>
+            <circle cx="400" cy="490" r="11"/><circle cx="440" cy="487" r="11"/><circle cx="480" cy="483" r="11"/><circle cx="520" cy="479" r="11"/><circle cx="560" cy="476" r="11"/>
+          </g>
+
+          <!-- flight path -->
+          <polyline points="80,162 454,105 476,157 94,225 108,288 498,209 520,261 123,351 137,414 541,314"
+                    fill="none" stroke="#FFFFFF" stroke-width="1.75" stroke-dasharray="3 6" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+          <circle cx="262" cy="134" r="13" fill="none" stroke="#fff" stroke-width="1.5" opacity=".7"/>
+          <circle cx="262" cy="134" r="5" fill="#fff"/>
+
+          <!-- weed patches + detections -->
+          <g>
+            <ellipse cx="222" cy="201" rx="15" ry="11" fill="#C9A74A" opacity=".85"/>
+            <ellipse cx="342" cy="262" rx="17" ry="12" fill="#C9A74A" opacity=".85"/>
+            <ellipse cx="262" cy="346" rx="14" ry="10" fill="#C9A74A" opacity=".85"/>
+            <ellipse cx="412" cy="212" rx="13" ry="10" fill="#C9A74A" opacity=".85"/>
+          </g>
+          <g stroke="#FF5A36" stroke-width="2.5" fill="rgba(255,90,54,.16)">
+            <rect class="det" style="--d:.6s" x="201" y="186" width="42" height="30"/>
+            <rect class="det" style="--d:1.0s" x="321" y="247" width="44" height="31"/>
+            <rect class="det" style="--d:1.4s" x="242" y="332" width="40" height="29"/>
+            <rect class="det" style="--d:.8s" x="393" y="198" width="38" height="29"/>
+          </g>
+          <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#fff">
+            <g class="det" style="--d:.7s"><rect x="201" y="166" width="78" height="18" fill="#111"/><text x="207" y="179">WEED 0.93</text></g>
+            <g class="det" style="--d:1.1s"><rect x="321" y="227" width="78" height="18" fill="#111"/><text x="327" y="240">WEED 0.91</text></g>
+          </g>
+
+          <!-- tree detections -->
+          <g stroke="#2BE0D2" stroke-width="2.5" fill="rgba(43,224,210,.14)">
+            <rect class="det" style="--d:1.8s" x="387" y="437" width="26" height="26"/>
+            <rect class="det" style="--d:2.0s" x="467" y="429" width="26" height="26"/>
+            <rect class="det" style="--d:2.2s" x="547" y="463" width="26" height="26"/>
+          </g>
+          <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#fff">
+            <g class="det" style="--d:1.9s"><rect x="387" y="417" width="70" height="18" fill="#111"/><text x="393" y="430">TREE 0.97</text></g>
+          </g>
+
+          <!-- HUD -->
+          <rect x="0" y="552" width="640" height="48" fill="#111" opacity=".86"/>
+          <g class="count" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" fill="#fff">
+            <text x="20" y="581">FIELD A-04 · 12.4 ha</text>
+            <text x="270" y="581" fill="#FF8A70">WEEDS 14</text>
+            <text x="368" y="581" fill="#2BE0D2">TREES 38</text>
+            <text x="466" y="581">CROP ROWS 212</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>Illustrative output. Each detection is labeled by class with a confidence score, then counted.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- Vision -->
+<div class="vision">
+  <div class="wrap grid">
+    <p class="label mono">Why FarmEye</p>
+    <div>
+      <p class="big">Help every farmer see their fields clearly, find problems early, and decide with confidence.</p>
+      <p>FarmEye combines drones and AI to improve efficiency and productivity, with precise 2D maps, real-time detection, classification and counting.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Services -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>What we map.</h2>
+      <p class="lead">Tell us what to look for. We tailor the scan and the labels to your farm.</p>
+    </div>
+
+    <div class="rows">
+      <div class="row">
+        <h3>Crop and tree mapping</h3>
+        <p>Where your crops and trees are, how many there are, and how healthy they look, across the whole field.</p>
+      </div>
+      <div class="row">
+        <h3>Weed and pest detection</h3>
+        <p>Weeds, pests and disease flagged early, so you can act before they spread.</p>
+      </div>
+      <div class="row">
+        <h3>Plant counting and density</h3>
+        <p>Counts and density for plants, trees or weeds, so decisions rest on numbers instead of walking the rows.</p>
+      </div>
+    </div>
+
+    <p class="delivers-title mono">Every scan delivers</p>
+    <dl class="delivers">
+      <div><dt>A labeled 2D map</dt><dd>High-precision, customized to your farm's needs.</dd></div>
+      <div><dt>Exact locations</dt><dd>Detection and localization that pinpoint where attention is needed.</dd></div>
+      <div><dt>Counts and density</dt><dd>Numbers you can plan around.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- How it works -->
+<section id="how-it-works" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>From booking to map in four steps.</h2>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Book a scan</h3>
+        <p>Share your farm's size and location. We schedule the flight.</p>
+      </li>
+      <li>
+        <h3>Choose what to map</h3>
+        <p>Crops, weeds, equipment, trees or other farm objects.</p>
+      </li>
+      <li>
+        <h3>We fly your fields</h3>
+        <p>A drone with a high-resolution camera captures the whole area.</p>
+      </li>
+      <li>
+        <h3>Review your map</h3>
+        <p>Objects are detected, classified and pinned on a 2D map, ready for you to review.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- App -->
+<section id="app" class="app">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>FarmEye OS: ground control for every flight.</h2>
+      <p class="lead">The desktop application that plans, flies and records each mission.</p>
+    </div>
+
+    <div class="shots">
+      <figure>
+        <div class="window">
+          <img src="images/dashboard.png" alt="FarmEye OS main dashboard showing the drone's live position on a satellite map" loading="lazy"
+               onerror="this.remove()">
+          <div class="ph" aria-hidden="true">images/dashboard.png</div>
         </div>
-        
-        <div class="steps-grid">
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <h3>Book a Scan</h3>
-                <p>Tell us your farm size and location. We'll schedule a convenient time for your aerial mapping mission.</p>
-            </div>
-            
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <h3>Tell Us What to Map</h3>
-                <p>Choose what you want to detect: crops, weeds, equipment, trees, or other farm objects.</p>
-            </div>
-            
-            <div class="step-card">
-                <div class="step-number">3</div>
-                <h3>Drone Flight & Data Capture</h3>
-                <p>We scan your fields with precision using advanced drone technology and high-resolution cameras.</p>
-            </div>
-            
-            <div class="step-card">
-                <div class="step-number">4</div>
-                <h3>AI-Powered Mapping</h3>
-                <p>Objects are detected, classified, and pinned on a 2D map in real-time, ready for your review.</p>
-            </div>
+        <h3>Main dashboard</h3>
+        <figcaption>The drone's exact position on a satellite map, with flight mode, battery, connection and obstacle status at a glance.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="window">
+          <img src="images/mission-planner.png" alt="FarmEye OS mission planner with a field boundary drawn on the map" loading="lazy" onerror="this.remove()">
+          <div class="ph" aria-hidden="true">images/mission-planner.png</div>
         </div>
-    </section>
+        <h3>Mission planner</h3>
+        <figcaption>Draw the field boundary. FarmEye OS sets flight height, speed and coverage, and respects your safety zones.</figcaption>
+      </figure>
 
-    <!-- Services Section -->
-    <section id="services" class="services">
-        <div class="section-header">
-            <div class="section-label">What We Offer</div>
-            <h2 class="section-title">Our Services</h2>
-            <p class="section-subtitle">Comprehensive agricultural mapping solutions tailored to your needs</p>
+      <figure>
+        <div class="window">
+          <img src="images/ai-detection.png" alt="FarmEye OS live detection view with labeled objects on the map" loading="lazy" onerror="this.remove()">
+          <div class="ph" aria-hidden="true">images/ai-detection.png</div>
         </div>
-        
-        <div class="services-grid">
-            <div class="service-card">
-                <div class="service-icon">🌾</div>
-                <h3>Crop & Tree Mapping</h3>
-                <p>Detailed mapping of your crops and trees with accurate counts, health status, and spatial distribution analysis.</p>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-icon">🔍</div>
-                <h3>Weed & Pest Detection</h3>
-                <p>Early detection of weeds, pests, and diseases to help you take action before problems spread across your fields.</p>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-icon">📊</div>
-                <h3>Plant Counting & Analysis</h3>
-                <p>Precise counting and density analysis of plants, trees, or even weeds to optimize your farm management.</p>
-            </div>
+        <h3>Live detection</h3>
+        <figcaption>Crops and weeds are detected, classified and marked during the flight, with running counts and smart filtering.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="window">
+          <img src="images/flight-records.png" alt="FarmEye OS flight records list with mission history" loading="lazy" onerror="this.remove()">
+          <div class="ph" aria-hidden="true">images/flight-records.png</div>
         </div>
+        <h3>Black box</h3>
+        <figcaption>Every mission is recorded automatically. Replay flights, export the data and track how your farm changes over time.</figcaption>
+      </figure>
+    </div>
 
-        <div class="about-highlight" style="margin-top: 60px;">
-            <h3>What We Deliver</h3>
-            <p style="margin-bottom: 16px;">High-precision 2D farm maps with labeled detections customized to your farm's specific needs.</p>
-            <p style="margin-bottom: 16px;">Real-time object detection and localization to pinpoint exactly where attention is needed.</p>
-            <p style="margin-bottom: 0;">Accurate counting and density analysis to help you make data-driven decisions.</p>
-        </div>
-    </section>
+    <p class="app-note mono"><span>Geofencing and alerts run on every flight.</span><span>Mobile app: coming soon.</span></p>
+  </div>
+</section>
 
-    <!-- App Interface Section -->
-    <section id="app" class="interface-showcase">
-        <div class="section-header">
-            <div class="section-label">FarmEye Application</div>
-            <h2 class="section-title">Powerful Desktop Application</h2>
-            <p class="section-subtitle">Everything you need to control and monitor your agricultural drone missions</p>
-        </div>
-        
-        <div class="interface-grid">
-            <div class="interface-item">
-                <div class="interface-visual">
-                    <img src="images/dashboard.png" alt="FarmEye OS Live Dashboard" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'interface-placeholder\'><div class=\'placeholder-icon\'>🎯</div><div class=\'placeholder-text\'>Live Dashboard</div></div>';">
-                </div>
-                <div class="interface-details">
-                    <h3>Main Dashboard</h3>
-                    <p>See your drone's exact location in real-time on satellite maps. Monitor flight status, battery levels, and system health at a glance.</p>
-                    <ul class="interface-features">
-                        <li>Real-time GPS tracking on satellite maps</li>
-                        <li>Live system status and connection monitoring</li>
-                        <li>Environmental sensing and obstacle detection</li>
-                        <li>Flight mode indicators and controls</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="interface-item">
-                <div class="interface-visual">
-                    <img src="images/mission-planner.png" alt="FarmEye OS Mission Planner" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'interface-placeholder\'><div class=\'placeholder-icon\'>🗺️</div><div class=\'placeholder-text\'>Mission Planner</div></div>';">
-                </div>
-                <div class="interface-details">
-                    <h3>Mission Planner</h3>
-                    <p>Design your flight missions with simple tools. Just define your field boundaries and let FarmEye OS handle the rest.</p>
-                    <ul class="interface-features">
-                        <li>Set field boundaries on the map</li>
-                        <li>Set flight height and speed automatically</li>
-                        <li>Optimize coverage for best results</li>
-                        <li>Safety zones and flight restrictions</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="interface-item">
-                <div class="interface-visual">
-                    <img src="images/ai-detection.png" alt="FarmEye OS AI Detection" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'interface-placeholder\'><div class=\'placeholder-icon\'>🤖</div><div class=\'placeholder-text\'>AI Detection</div></div>';">
-                </div>
-                <div class="interface-details">
-                    <h3>Real-Time AI Detection</h3>
-                    <p>Watch as objects are automatically detected and marked on your map during flight. No technical knowledge required.</p>
-                    <ul class="interface-features">
-                        <li>Automatic crop and weed detection</li>
-                        <li>Instant object classification</li>
-                        <li>Smart filtering for accurate results</li>
-                        <li>Live detection counts and statistics</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="interface-item">
-                <div class="interface-visual">
-                    <img src="images/flight-records.png" alt="FarmEye OS Flight Records" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'interface-placeholder\'><div class=\'placeholder-icon\'>📊</div><div class=\'placeholder-text\'>Flight Records</div></div>';">
-                </div>
-                <div class="interface-details">
-                    <h3>Black Box Feature</h3>
-                    <p>Every mission is automatically recorded. Review past flights, analyze patterns, and track your farm's changes over time.</p>
-                    <ul class="interface-features">
-                        <li>Automatic flight data logging</li>
-                        <li>Mission history and replay</li>
-                        <li>Export data for analysis</li>
-                        <li>Performance tracking and reports</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Demo -->
+<section id="demo">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>See a simulated flight.</h2>
+      <p class="lead">A simulation test of the FarmEye OS desktop control system.</p>
+    </div>
+    <div class="video">
+      <iframe src="https://www.youtube.com/embed/WTERQG-I65U" title="FarmEye OS simulation demo" loading="lazy"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
 
-    <!-- Demo Section -->
-    <section id="demo" class="demo">
-        <div class="section-header">
-            <div class="section-label">See It In Action</div>
-            <h2 class="section-title">FarmEye OS Demo</h2>
-            <p class="section-subtitle">Watch a simulation test of our desktop control system in action</p>
-        </div>
-        
-        <div class="demo-container">
-            <div class="video-wrapper">
-                <iframe 
-                    src="https://www.youtube.com/embed/WTERQG-I65U" 
-                    title="FarmEye OS Demo" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            </div>
-        </div>
-    </section>
+<!-- Contact -->
+<section id="contact" class="contact">
+  <div class="wrap">
+    <h2>Get in touch.</h2>
+    <p class="lead">Contact details are coming soon.</p>
+    <!-- TODO: add a real email / form here, e.g.
+         <a class="btn primary" href="mailto:YOUR-ADDRESS">Book a scan</a> -->
+  </div>
+</section>
 
-    <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="section-header">
-            <div class="section-label">Why Choose FarmEye</div>
-            <h2 class="section-title">Key Features</h2>
-            <p class="section-subtitle">Everything you need to manage your farm with confidence</p>
-        </div>
-        
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3>Real-Time Monitoring</h3>
-                <p>Track drone operations live with satellite map overlay and system status updates.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">🤖</div>
-                <h3>AI-Powered Detection</h3>
-                <p>Advanced object detection and classification that learns and adapts to your farm.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">📈</div>
-                <h3>Smart Planning</h3>
-                <p>Optimize farm operations with up-to-date maps and actionable insights.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">🎮</div>
-                <h3>Easy Mission Control</h3>
-                <p>Configure flight missions with simple controls — no technical expertise needed.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <h3>Built-In Safety</h3>
-                <p>Automated safety systems ensure secure operations with geofencing and alerts.</p>
-            </div>
-        </div>
-    </section>
+</main>
 
-    <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <div class="section-header">
-            <div class="section-label">Get Started</div>
-            <h2 class="section-title">Ready to Transform Your Farm?</h2>
-            <p class="section-subtitle">Join the future of precision agriculture with FarmEye</p>
-        </div>
-        
-        <div class="coming-soon-badge">
-            <span class="status-dot"></span>
-            Contact Information Coming Soon
-        </div>
-        
-        <p style="color: var(--text-secondary); margin-top: 32px; font-size: 16px;">
-            We're currently preparing our contact channels. Check back soon for more information!
-        </p>
-    </section>
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="FarmEye home">
+      <img src="images/logo.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <span class="fallback" aria-hidden="true">FE</span>
+      FarmEye
+    </a>
+    <p>&copy; 2026 FarmEye. Precision agriculture technology.</p>
+  </div>
+</footer>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">
-                <img src="images/logo.png" alt="FarmEye Logo" class="logo-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="logo-icon-fallback" style="display:none;">FE</div>
-                <span>FarmEye</span>
-            </div>
-            <div class="footer-text">
-                <p>&copy; 2025 FarmEye . Precision Agriculture Technology.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        const nav = document.getElementById('nav');
-
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileMenuBtn.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
-        });
-
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                mobileMenuBtn.textContent = '☰';
-            });
-        });
-
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const navHeight = nav.offsetHeight;
-                    const targetPosition = target.offsetTop - navHeight;
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Navbar scroll effect
-        let lastScroll = 0;
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.scrollY;
-            
-            if (currentScroll > 50) {
-                nav.classList.add('scrolled');
-            } else {
-                nav.classList.remove('scrolled');
-            }
-            
-            lastScroll = currentScroll;
-        });
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        document.querySelectorAll('.step-card, .service-card, .feature-card').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-            observer.observe(el);
-        });
-    </script>
+<script>
+  const btn = document.getElementById('menuBtn');
+  const list = document.getElementById('navList');
+  btn.addEventListener('click', () => {
+    const open = list.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+    btn.textContent = open ? 'Close' : 'Menu';
+  });
+  list.addEventListener('click', e => {
+    if (e.target.closest('a')) { list.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.textContent = 'Menu'; }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && list.classList.contains('open')) { list.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.textContent = 'Menu'; btn.focus(); }
+  });
+</script>
 </body>
-
+</html>
